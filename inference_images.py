@@ -57,12 +57,15 @@ net.load_state_dict(state_dict_single, strict=False)
 
 i = 0
 
+datapath = 'data/trial 2/'
+resultpath = 'data/result 2 trial 2/'
 
-imgf = 'data/trial 2/img' + str(i) + '.jpg'             # image path of whole face
-img1 = 'data/trial 2/just_eyes' + str(i) + '.jpg'       # image path of eyes extracted, a sequence of 4 frames
-img2 = 'data/trial 2/just_eyes' + str(i+1) + '.jpg'
-img3 = 'data/trial 2/just_eyes' + str(i+2) + '.jpg'
-img4 = 'data/trial 2/just_eyes' + str(i+3) + '.jpg'
+
+imgf = datapath + 'img' + str(i) + '.jpg'             # image path of whole face
+img1 = datapath + 'just_eyes' + str(i) + '.jpg'       # image path of eyes extracted, a sequence of 4 frames
+img2 = datapath + 'just_eyes' + str(i+1) + '.jpg'
+img3 = datapath + 'just_eyes' + str(i+2) + '.jpg'
+img4 = datapath + 'just_eyes' + str(i+3) + '.jpg'
 
 
 
@@ -163,10 +166,10 @@ for i in range(framestart, framestart + frames-3):
 
     
     # projecting the points on a 2 D image of size imgw, imgh
-    # uncomment this when uing the x and y components of the 3 D vector, after multiplying them by -1 
+    # uncomment this when uing the x and y components of the 3 D vector, after multiplying them by -1, x and y shall between -1 and 1 
 
-    #imgx = int((x)*imgw/2 + imgw/2)
-    #imgy = int((y)*imgh/2 + imgh/2)
+    #imgx = max(0, min(int((x)*imgw/2 + imgw/2), imgw - 1))
+    #imgy = max(0, min(int((y)*imgh/2 + imgh/2), imgh - 1))
 
     imgx_results = np.append(imgx_results, imgx)
     imgy_results = np.append(imgy_results, imgy)
@@ -182,7 +185,7 @@ for i in range(framestart, framestart + frames-3):
     cv2.circle(circleimg, (imgx, imgy), 20, (0,185,255), -1)
 
 
-    resultname = 'data/result trial 2/img' + str(i) + '.jpg'     
+    resultname = resultpath + 'img' + str(i) + '.jpg'     
     #resultname = 'data/result TEyeD/img' + str(i) + '.jpg'
 
     imgface = imgface[0:-120,:,:]   
@@ -203,7 +206,7 @@ for i in range(framestart, framestart + frames-3):
 
     if i < framestart + frames - 4:
 
-        imgname4 = 'data/trial 2/just_eyes' + str(i+4) + '.jpg'
+        imgname4 = datapath + 'just_eyes' + str(i+4) + '.jpg'
 
         #imgname4 = TEyeDpath + str(i+4) + '.jpg'
 
@@ -217,7 +220,7 @@ for i in range(framestart, framestart + frames-3):
 
         imgs[0,3,:,:] = imgnew
 
-        imgf = 'data/trial 2/img' + str(i+1) + '.jpg'
+        imgf = datapath + 'img' + str(i+1) + '.jpg'
 
         #imgf = TEyeDpath + str(i+1) + '.jpg'
 
@@ -225,5 +228,5 @@ for i in range(framestart, framestart + frames-3):
 
 resultsdict = {'gaze_vector_list': gaze_vector_list, 'x_results': x_results, 'y_results': y_results, 'imgx_results': imgx_results, 'imgy_results': imgy_results}
 
-with open('data/result trial 2/results.npy', 'wb') as f:
+with open(resultpath + 'results.npy', 'wb') as f:
     np.save(f, resultsdict, allow_pickle=True)
