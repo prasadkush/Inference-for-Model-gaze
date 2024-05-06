@@ -58,11 +58,11 @@ net.load_state_dict(state_dict_single, strict=False)
 i = 0
 
 
-imgf = 'data/trial 1/img' + str(i) + '.jpg'             # image path of whole face
-img1 = 'data/trial 1/just_eyes' + str(i) + '.jpg'       # image path of eyes extracted, a sequence of 4 frames
-img2 = 'data/trial 1/just_eyes' + str(i+1) + '.jpg'
-img3 = 'data/trial 1/just_eyes' + str(i+2) + '.jpg'
-img4 = 'data/trial 1/just_eyes' + str(i+3) + '.jpg'
+imgf = 'data/trial 2/img' + str(i) + '.jpg'             # image path of whole face
+img1 = 'data/trial 2/just_eyes' + str(i) + '.jpg'       # image path of eyes extracted, a sequence of 4 frames
+img2 = 'data/trial 2/just_eyes' + str(i+1) + '.jpg'
+img3 = 'data/trial 2/just_eyes' + str(i+2) + '.jpg'
+img4 = 'data/trial 2/just_eyes' + str(i+3) + '.jpg'
 
 
 
@@ -104,7 +104,7 @@ imgh = 480
 #frames = 1000
 
 framestart = 0
-frames = 10
+frames = 3351
 
 
 # for storing the results
@@ -139,7 +139,8 @@ for i in range(framestart, framestart + frames-3):
 
     #print('out_dict gaze_vector_3D: ', out_dict['gaze_vector_3D'])
    
-    # x/z and y/z, homogenous coordinates
+    # below: -x/z and -y/z, out_dict['gaze_vector_3D'][0,0,0] is the z-component, -out_dict['gaze_vector_3D'][0,0,1] is tbe x-component and
+    # -out_dict['gaze_vector_3D'][0,0,2] is the y-component
 
     x = out_dict['gaze_vector_3D'][0,0,1]/out_dict['gaze_vector_3D'][0,0,0]
     y = out_dict['gaze_vector_3D'][0,0,2]/out_dict['gaze_vector_3D'][0,0,0]
@@ -154,7 +155,7 @@ for i in range(framestart, framestart + frames-3):
     y_results = np.append(y_results, y)
 
     
-    # projecting the points on a 2 D image of size imgw, imgh, assuming that the maximum value of x/z and y/z can be + or - 3
+    # projecting the points on a 2 D image of size imgw, imgh, assuming that the maximum value of x/z and y/z can be +1.5 or -1.5
     # uncomment this when using x/z and y/z
 
     imgx = int((x/3)*imgw + imgw/2)
@@ -164,8 +165,8 @@ for i in range(framestart, framestart + frames-3):
     # projecting the points on a 2 D image of size imgw, imgh
     # uncomment this when uing the x and y components of the 3 D vector, after multiplying them by -1 
 
-    #imgx = int((x)*imgw + imgw/2)
-    #imgy = int((y)*imgh + imgh/2)
+    #imgx = int((x)*imgw/2 + imgw/2)
+    #imgy = int((y)*imgh/2 + imgh/2)
 
     imgx_results = np.append(imgx_results, imgx)
     imgy_results = np.append(imgy_results, imgy)
@@ -181,18 +182,18 @@ for i in range(framestart, framestart + frames-3):
     cv2.circle(circleimg, (imgx, imgy), 20, (0,185,255), -1)
 
 
-    resultname = 'data/result4 trial 1/img' + str(i) + '.jpg'     
+    resultname = 'data/result trial 2/img' + str(i) + '.jpg'     
     #resultname = 'data/result TEyeD/img' + str(i) + '.jpg'
 
-    imgface = imgface[0:-50,:,:]   
+    imgface = imgface[0:-120,:,:]   
 
-    imgface = cv2.resize(imgface, (100,75))
+    imgface = cv2.resize(imgface, (150,60))
 
     #imgface = cv2.resize(imgface, (160,120))   # for TEyeD Dataset
 
     # overlaying image of face on the circle image
 
-    circleimg[-75:,-100:,:] = imgface
+    circleimg[-60:,-150:,:] = imgface
 
     #circleimg[-120:,-160:,:] = imgface   # for TEyeD Dataset
 
@@ -202,7 +203,7 @@ for i in range(framestart, framestart + frames-3):
 
     if i < framestart + frames - 4:
 
-        imgname4 = 'data/trial 1/just_eyes' + str(i+4) + '.jpg'
+        imgname4 = 'data/trial 2/just_eyes' + str(i+4) + '.jpg'
 
         #imgname4 = TEyeDpath + str(i+4) + '.jpg'
 
@@ -216,7 +217,7 @@ for i in range(framestart, framestart + frames-3):
 
         imgs[0,3,:,:] = imgnew
 
-        imgf = 'data/trial 1/img' + str(i+1) + '.jpg'
+        imgf = 'data/trial 2/img' + str(i+1) + '.jpg'
 
         #imgf = TEyeDpath + str(i+1) + '.jpg'
 
@@ -224,5 +225,5 @@ for i in range(framestart, framestart + frames-3):
 
 resultsdict = {'gaze_vector_list': gaze_vector_list, 'x_results': x_results, 'y_results': y_results, 'imgx_results': imgx_results, 'imgy_results': imgy_results}
 
-with open('data/result4 trial 1/results.npy', 'wb') as f:
+with open('data/result trial 2/results.npy', 'wb') as f:
     np.save(f, resultsdict, allow_pickle=True)
